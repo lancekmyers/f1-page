@@ -2,6 +2,7 @@
 title: Saudi Arabia Grand Prix
 sql:
   laps: ./data/saudi_laps.parquet
+  quali_results: ./data/saudi_quali_results.parquet
 ---
 
 <style>
@@ -157,3 +158,46 @@ group by Driver, stint
 <div class="card"> 
     ${Inputs.table(PitTime)}
 </div>
+
+## Qualifying
+
+```js
+const lap_fmt = new Intl.NumberFormat('en-US', 
+    {minimumFractionalDigits: 3, maximumFractionalDigits: 3, signDisplay: "always"}
+  )
+```
+
+<div class="card"> 
+    ${Plot.plot({
+        title: "Quali",
+        width, 
+        x: {axis: "top", label: "Session"},
+        y: {label: "Driver", domain: quali_results.toArray().map(r => r.Driver)},
+        color: {type: "linear", scheme: "RdPu"},
+        marks: [
+            Plot.cell(
+              quali_results, 
+              {x : 1, y : "Driver",  fill : "Q1" }
+            ),
+            Plot.cell(
+              quali_results, 
+              {x : 2, y : "Driver", fill : "Q2"}
+            ),
+            Plot.cell(
+              quali_results, 
+              {x : 3, y : "Driver", fill : "Q3"}
+            ),
+        ]
+    })}
+</div>
+
+```sql id=quali_results
+
+select Driver, Position, 
+  Q1 / (min(Q1) over ()) as Q1,
+  Q2 / (min(Q2) over ()) as Q2,
+  Q3 / (min(Q3) over ()) as Q3, 
+from quali_results
+order by position
+```
+
