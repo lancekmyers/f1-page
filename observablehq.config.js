@@ -15,7 +15,7 @@ export default {
   //     ]
   //   }
   // ],
-
+  style: "style.css",
   // Some additional configuration options and their defaults:
   // theme: "default", // try "light", "dark", "slate", etc.
   // header: "", // what to show in the header (HTML)
@@ -23,6 +23,6 @@ export default {
   // toc: true, // whether to show the table of contents
   // pager: true, // whether to show previous & next links in the footer
   // root: "docs", // path to the source root for preview
-  // output: "dist", // path to the output root for build
+  output: "build", // path to the output root for build
   // search: true, // activate search
 };
