@@ -72,6 +72,33 @@ const selected_driver = view(
     );
 ```
 
+```sql id=laps
+select * from laps
+```
+
+<div class="card"> 
+    ${resize((width) => Plot.plot({
+        title: "Positions",
+        width, 
+        x: {axis: "bottom", label: "Lap"},
+        y: {label: "Position", reverse: "true"},
+        marks: [
+            Plot.line(laps, 
+              {x:"LapNumber", y:"Position", z:"Driver", title: "Driver", 
+              strokeWidth: ((d) => d.Driver == selected_driver ? 4 : 2), tip: true}
+            ),
+            Plot.text(laps, Plot.selectLast({
+              x: "LapNumber",
+              y: "Position",
+              z: "Driver",
+              text: "Driver",
+              textAnchor: "start",
+              dx: 3
+            }))
+        ]
+    }))}
+</div>
+
 <div class = "card">
 ${resize((width) => Plot.plot({
       title: "Lap Times",
