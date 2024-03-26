@@ -56,6 +56,13 @@ from laps
               stroke: "Compound"
               }
             ),
+            Plot.line(laps, 
+              {x:"LapNumber", y:"Position", 
+              filter: (d) => d.Driver == selected_driver,
+              strokeWidth: 2,
+              stroke: "black"
+              }
+            ),
             Plot.dot(
               PitTime, {
                 x: "LapNumber", y:"Position",
