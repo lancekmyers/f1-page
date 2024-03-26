@@ -4,6 +4,7 @@ sql:
   laps: ./data/saudi_laps.parquet
   quali_results: ./data/saudi_quali_results.parquet
   quali_telemetry_source: ./data/saudi_quali_telemetry.parquet
+  corners: ./data/saudi_corners.parquet
 ---
 
 <div class="hero">
@@ -32,6 +33,10 @@ const selected_driver = view(
 
 ```sql id=laps
 select * from laps
+```
+
+```sql id=corners
+select * from corners
 ```
 
 ```sql id=drivers
@@ -193,19 +198,13 @@ where PitTime is not null
 ORDER BY LapNumber
 ```
 
-
-
-<div class="card"> 
-    ${Inputs.table(PitTime)}
-</div>
-
 ## Qualifying
 
 ```js
 const lap_fmt = new Intl.NumberFormat('en-US', 
     {minimumFractionalDigits: 2, maximumFractionalDigits: 3, 
     signDisplay: "always"}
-  )
+  );
 ```
 <div class="grid grid-cols-2">
 <div class="card"> 
@@ -249,20 +248,6 @@ const lap_fmt = new Intl.NumberFormat('en-US',
         ]
     }))}
   </div> 
-  <div class="card">
-  ${Plot.plot({
-        x: {label:null, ticks: []},
-        y: {label:null, ticks: []},
-        color: {scheme: "Cividis", legend: true},
-        marks: [
-          Plot.line(
-            quali_telemetry_selected, 
-            {x : "Y", y:"X", stroke: "Speed", z: "Driver", strokeWidth: 5}
-          )
-        ], 
-      aspectRatio: 1})
-    }
-  </div>
 </div>
 
 
@@ -289,13 +274,50 @@ where Driver = '1'
 
 
 ```js
-const nGearScale = d3.scaleLinear().domain([1,8]).range([0,1]);
+const fromCornerInput = Inputs.range([1, 27], {label: "From Corner", step:1, value: 1});
+const toCornerInput = Inputs.range([1, 27], {label: "To Corner", step:1, value : 25});
+const fromCorner = Generators.input(fromCornerInput);
+const toCorner = Generators.input(toCornerInput);
 ```
+
 <div>
+  <div class="card">
+  ${fromCornerInput}
+  ${toCornerInput}
+  ${Plot.plot({
+        x: {label:null, ticks: []},
+        y: {label:null, ticks: []},
+        color: {scheme: "Blues", legend: true},
+        marks: [
+          Plot.line(
+            quali_telemetry_selected, 
+            {x : "Y", y:"X", stroke: "Speed", z: "Driver", strokeWidth: 5}
+          ),
+          Plot.dot(
+            corners,
+            {x : "Y", y:"X", 
+            fill: (d) => (d.Number >= fromCorner && d.Number <= toCorner) ? "white" : "black"}
+           ),
+        ], 
+      aspectRatio: 1})
+    }
+  </div>
   <div class="card"> 
   ${resize((width) => Plot.plot({
     width,
+    y : {label: "", ticks :[]},
+    x : { 
+      domain : [corners.toArray()[fromCorner - 1].RelativeDistance, corners.toArray()[toCorner - 1].RelativeDistance]
+    },
     marks: [
+      Plot.gridX(
+        corners.toArray().slice(fromCorner-1, toCorner), 
+        {x : "RelativeDistance", stroke: 'black'}
+      ),
+      Plot.axisX(
+        corners.toArray().slice(fromCorner-1, toCorner),
+        {x : "RelativeDistance", tickFormat: (d, i) => d['Number'], label : "Corner"}
+      ),
       Plot.line(
         quali_telemetry, 
         Plot.normalizeY({
@@ -316,7 +338,8 @@ const nGearScale = d3.scaleLinear().domain([1,8]).range([0,1]);
           x : "RelativeDistance", y: "Speed", fy: (_) => "Speed",
           opacity: (d) => d.Driver == '1' ? 1 : 0.1,
           z: "Driver", sort: "RelativeDistance" })
-    ),]}))
+    )
+    ]}))
   }
   </div>
   
