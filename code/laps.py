@@ -35,8 +35,11 @@ saudi_quali_results = pl.DataFrame(
 saudi_quali_results.write_parquet('docs/data/saudi_quali_results.parquet')
 
 quali_pos.write_parquet('docs/data/saudi_quali_position.parquet')
-saudi_gp.track_status
 
+circuit_corners = saudi_gp.get_circuit_info().corners
+circuit_corners['RelativeDistance'] = (circuit_corners['Distance'] / circuit_corners['Distance'].sum()).cumsum()
+circuit_corners = pl.DataFrame(circuit_corners)
+circuit_corners.write_parquet('docs/data/saudi_corners.parquet')
 
 quali_fastest_laps = {
     driver: saudi_quali.laps.pick_drivers([driver]).pick_fastest() 
