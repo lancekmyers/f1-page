@@ -34,6 +34,13 @@ const selected_driver = view(
 select * from laps
 ```
 
+```sql id=drivers
+select 
+    distinct Driver as driver
+from laps
+```
+
+<div class="grid grid-cols-2">
 <div class="card"> 
     ${resize((width) => Plot.plot({
         title: "Positions",
@@ -69,6 +76,7 @@ select * from laps
 </div>
 
 <div class = "card">
+<div>
 ${resize((width) => Plot.plot({
       title: "Lap Times",
       width,
@@ -90,19 +98,24 @@ ${resize((width) => Plot.plot({
     }))}
 </div>
 
-```js
-Plot.plot({
-    title: "Lap Times",
-    x : {domain: [1,1.15]},
-    marks: [
-      Plot.boxX(
+
+</div>
+
+<div class="card" style="grid-column: span 3; height: fit-content;"> 
+  ${resize((width) => 
+    Plot.plot({
+      width, 
+      title: "Lap Times",
+      x : {domain: [1,1.15]},
+      marks: [
+        Plot.boxX(
           lap_times, 
           Plot.normalizeX("min", {
             x: d => d["Sector3Time"] * 1e-9, 
             fy : (_) => "Sector3",
             opacity: 0.5 
           })),
-      Plot.dot(
+        Plot.dot(
           lap_times, 
           Plot.dodgeY("middle", 
             Plot.normalizeX("min", {
@@ -112,7 +125,7 @@ Plot.plot({
               opacity: (d) => d.Driver == selected_driver ? 1 : 0,
               tip: true,
           }))),
-      Plot.boxX(
+        Plot.boxX(
           lap_times, 
           Plot.normalizeX("min", {
             x: d => d["Sector2Time"] * 1e-9, 
@@ -149,14 +162,11 @@ Plot.plot({
               tip: true,
           })))
       ]
-    })
-```
+    }))}
+</div>
 
-```sql id=drivers
-select 
-    distinct Driver as driver
-from laps
-```
+</div>
+
 
 ```sql id=PitTime
 WITH PitTime as (
@@ -190,9 +200,9 @@ const lap_fmt = new Intl.NumberFormat('en-US',
     signDisplay: "always"}
   )
 ```
-
+<div class="grid grid-cols-2">
 <div class="card"> 
-    ${Plot.plot({
+    ${resize((width) => Plot.plot({
         title: "Quali",
         width, 
         x: {axis: "top", label: "Session"},
@@ -230,8 +240,24 @@ const lap_fmt = new Intl.NumberFormat('en-US',
                 text : (d) => lap_fmt.format(100 * (d["Q3"])) + "\%"}
             ),
         ]
-    })}
+    }))}
+  </div> 
+  <div class="card">
+  ${Plot.plot({
+        x: {label:null, ticks: []},
+        y: {label:null, ticks: []},
+        color: {scheme: "Cividis", legend: true},
+        marks: [
+          Plot.line(
+            quali_telemetry_selected, 
+            {x : "Y", y:"X", stroke: "Speed", z: "Driver", strokeWidth: 5}
+          )
+        ], 
+      aspectRatio: 1})
+    }
+  </div>
 </div>
+
 
 ```sql id=quali_results
 
@@ -258,43 +284,33 @@ where Driver = '1'
 ```js
 const nGearScale = d3.scaleLinear().domain([1,8]).range([0,1]);
 ```
-
-```js
-Plot.plot({
-  marks: [
+<div>
+  <div class="card"> 
+  ${resize((width) => Plot.plot({
+    width,
+    marks: [
+      Plot.line(
+        quali_telemetry, 
+        Plot.normalizeY({
+          x : "RelativeDistance", y:"nGear", fy: (_) => "nGear",
+          opacity: (d) => d.Driver == '1' ? 1 : 0.1,
+          z: "Driver", sort: "RelativeDistance"})
+    ), 
     Plot.line(
-      quali_telemetry, 
-      Plot.normalizeY({
-        x : "RelativeDistance", y:"nGear", fy: (_) => "nGear",
-        opacity: (d) => d.Driver == '1' ? 1 : 0.1,
-        z: "Driver", sort: "RelativeDistance"})
-  ), 
-  Plot.line(
-      quali_telemetry, 
-      Plot.normalizeY({
-        x : "RelativeDistance", y:"Throttle", fy: (_) => "Throttle",
-        opacity: (d) => d.Driver == '1' ? 1 : 0.1,
-        z: "Driver", sort: "RelativeDistance"})
-  ),
-  Plot.line(
-      quali_telemetry,
-      Plot.normalizeY({
-        x : "RelativeDistance", y: "Speed", fy: (_) => "Speed",
-        opacity: (d) => d.Driver == '1' ? 1 : 0.1,
-        z: "Driver", sort: "RelativeDistance" })
-  ),]})
-```
-
-```js
-Plot.plot({
-  x: {label:null, ticks: []},
-  y: {label:null, ticks: []},
-  color: {scheme: "Cividis", legend: true},
-  marks: [
+        quali_telemetry, 
+        Plot.normalizeY({
+          x : "RelativeDistance", y:"Throttle", fy: (_) => "Throttle",
+          opacity: (d) => d.Driver == '1' ? 1 : 0.1,
+          z: "Driver", sort: "RelativeDistance"})
+    ),
     Plot.line(
-      quali_telemetry_selected, 
-      {x : "Y", y:"X", stroke: "Speed", z: "Driver", strokeWidth: 5}
-    )
-  ], 
-  aspectRatio: 1})
-```
+        quali_telemetry,
+        Plot.normalizeY({
+          x : "RelativeDistance", y: "Speed", fy: (_) => "Speed",
+          opacity: (d) => d.Driver == '1' ? 1 : 0.1,
+          z: "Driver", sort: "RelativeDistance" })
+    ),]}))
+  }
+  </div>
+  
+</div>
