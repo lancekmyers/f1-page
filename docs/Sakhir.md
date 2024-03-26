@@ -8,7 +8,7 @@ sql:
 ---
 
 <div class="hero">
-<h1> Jeddah </h1>
+<h1> Sakhir </h1>
 <h2> Bahrain Grand Prix </h2>
 </div>
 
@@ -274,8 +274,9 @@ where Driver = '1'
 
 
 ```js
-const fromCornerInput = Inputs.range([1, 27], {label: "From Corner", step:1, value: 1});
-const toCornerInput = Inputs.range([1, 27], {label: "To Corner", step:1, value : 25});
+const N = corners.toArray().length;
+const fromCornerInput = Inputs.range([1, N], {label: "From Corner", step:1, value: 1});
+const toCornerInput = Inputs.range([1, N], {label: "To Corner", step:1, value : N});
 const fromCorner = Generators.input(fromCornerInput);
 const toCorner = Generators.input(toCornerInput);
 ```
