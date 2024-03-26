@@ -1,15 +1,15 @@
 ---
-title: Saudi Arabia Grand Prix
+title: Australian Grand Prix
 sql:
-  laps: ./data/Jeddah_laps.parquet
-  quali_results: ./data/Jeddah_quali_results.parquet
-  quali_telemetry_source: ./data/Jeddah_quali_telem.parquet
-  corners: ./data/Jeddah_corners.parquet
+  laps: ./data/Melbourne_laps.parquet
+  quali_results: ./data/Melbourne_quali_results.parquet
+  quali_telemetry_source: ./data/Melbourne_quali_telem.parquet
+  corners: ./data/Melbourne_corners.parquet
 ---
 
 <div class="hero">
-<h1> Jeddah </h1>
-<h2> Saudi Arabia Grand Prix </h2>
+<h1> Melbourne </h1>
+<h2> Australian Grand Prix </h2>
 </div>
 
 ```sql id=lap_times
@@ -267,15 +267,16 @@ select *, min(SessionTime) OVER (PARTITION BY Driver) as LapStart from quali_tel
 
 ```sql id=quali_telemetry_selected
 select * from quali_telemetry_source
-where Driver = '1'
+where Driver = '44'
 ```
 
 ## Qualifying Telemetry
 
 
 ```js
-const fromCornerInput = Inputs.range([1, 27], {label: "From Corner", step:1, value: 1});
-const toCornerInput = Inputs.range([1, 27], {label: "To Corner", step:1, value : 25});
+const N = corners.toArray().length;
+const fromCornerInput = Inputs.range([1, N], {label: "From Corner", step:1, value: 1});
+const toCornerInput = Inputs.range([1, N], {label: "To Corner", step:1, value : N});
 const fromCorner = Generators.input(fromCornerInput);
 const toCorner = Generators.input(toCornerInput);
 ```

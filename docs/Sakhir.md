@@ -1,15 +1,15 @@
 ---
-title: Saudi Arabia Grand Prix
+title: Bahrain Grand Prix
 sql:
-  laps: ./data/Jeddah_laps.parquet
-  quali_results: ./data/Jeddah_quali_results.parquet
-  quali_telemetry_source: ./data/Jeddah_quali_telem.parquet
-  corners: ./data/Jeddah_corners.parquet
+  laps: ./data/Sakhir_laps.parquet
+  quali_results: ./data/Sakhir_quali_results.parquet
+  quali_telemetry_source: ./data/Sakhir_quali_telem.parquet
+  corners: ./data/Sakhir_corners.parquet
 ---
 
 <div class="hero">
 <h1> Jeddah </h1>
-<h2> Saudi Arabia Grand Prix </h2>
+<h2> Bahrain Grand Prix </h2>
 </div>
 
 ```sql id=lap_times
