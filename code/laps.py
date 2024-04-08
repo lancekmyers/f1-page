@@ -3,7 +3,7 @@ from fastf1 import events
 import polars as pl
 from requests import Session
 
-rounds = [1, 2, 3]
+rounds = [1, 2, 3, 4]
 season = 2024
 
 
